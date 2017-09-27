@@ -224,11 +224,23 @@
 	module.controller('geonode_search_controller', function($injector, $scope,
 		$location, $http, Configs, $parse) {
 		$scope.loading=true
+		$scope.value =true
 		$scope.query = $location.search();
 		$scope.query.limit = $scope.query.limit || CLIENT_RESULTS_LIMIT;
 		$scope.query.offset = $scope.query.offset || 0;
 		$scope.page = Math.round(($scope.query.offset / $scope.query.limit) + 1);
-
+		$scope.fun=function (id) {
+			var element = document.getElementById("toggle" + id);
+			 console.log(id)
+			console.log(element.classList)
+			if (element.classList.contains("fa-angle-down")) {
+				element.classList.remove("fa-angle-down")
+				element.classList.toggle("fa-angle-up");
+			} else {
+				element.classList.remove("fa-angle-up")
+				element.classList.toggle("fa-angle-down");
+			}
+		}
 		//Get data from apis and make them available to the page
 		function query_api(data) {
 			if (angular.isString(data.app__title)) {
@@ -247,6 +259,8 @@
 				params: data || {}
 			}).success(function(data) {
 				$scope.loading=false
+				
+				
 				$scope.results = data.objects.sort(function(x, y) {
 					return (x.featured === y.featured) ? 0 : x.featured ? -1 : 1;
 				});

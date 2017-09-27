@@ -1,0 +1,84 @@
+<style>
+    .card {
+        /* Add shadows to create the "card" effect */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+    }
+    /* On mouse-over, add a deeper shadow */
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+    /* Add some padding inside the card container */
+
+    .container {
+        padding: 2px 16px;
+    }
+
+    h4 {
+        padding-left: 3%;
+        padding-top: 3%;
+    }
+ 
+</style>
+{% verbatim %}
+
+  
+<div style="display: flex;flex-wrap: wrap;">
+
+    <div style="max-width:240px ; margin: 1%;" ng-repeat="item in results" resource_id="{{ item.id }}">
+        <div class="card">
+            <h4><a href="{{ item.launch_app_url }}">{{ item.title }}</a></h4>
+            <button style="    margin-top: -10%; margin-right: 2%;" class="btn btn-default btn-xs pull-right" ng-if="cart" ng-click="cart.toggleItem(item)"><i
+                    ng-class="cart.getFaClass(item.id)" class="fa fa-lg"></i></button>
+
+            <small style="color:gray;padding-left:3%;padding-bottom:3%"> <i class="fa fa-calendar-o"></i>{{
+                item.date|date:'d MMM y' }}</small>
+            <br/>
+            <div style="background-color:lavender"> <img ng-src="{{ item.thumbnail_url || item.map.thumbnail_url }}" fallback-src="/static/{{ item.app.name }}/logo.png"
+                    loading-src style="max-height: 180px"><a href="{{ item.launch_app_url }}"></a></img>
+            </div>
+            <div >
+               <div class="col-md-10"></div>
+               
+                <a class="" ng-click="fun(item.id)" href="#{{item.id}}" data-toggle="collapse">  <i id="toggle{{item.id}}" class="fa fa-angle-down" style="font-size:36px"></i></a>
+
+                <div id="{{item.id}}" class="collapse">
+                    <div class="row">
+                        <div class="col-xs-12 item-items" style="margin :10%">
+                            <ul class="list-inline">
+                                <li><a href="/people/profile/{{ item.owner }}"><i class="fa fa-user"></i>{{ item.owner
+                                                    }}</a></li>
+
+                                <li><a href="{{ item.launch_app_url }}"><i class="fa fa-eye"></i>{{ item.popular_count
+                                                    }}</a></li>
+                                <li><a href="{{ item.launch_app_url }}#share"><i class="fa fa-share"></i>{{
+                                                    item.share_count }}</a></li>
+                                <li><a href="{{ item.launch_app_url }}#rate"><i class="fa fa-star"></i>{{ item.rating }}</a>
+                                </li>
+                                <li><a ng-if="item.detail_url.indexOf('/layers/') > -1" href="{% endverbatim %}{% url " new_map
+                                        " %}?layer={% verbatim %}{{ item.detail_url.substring(8) }}">
+                                                    <i class="fa fa-map-marker"></i>Create a Map</a>
+                                </li>
+                                <!--<li><a href="{{item.launch_app_url}}"><i class="fa fa-map-marker"></i>Launch App</a></li>-->
+                                <br/>
+                                <br/>
+                                <li><a class="btn btn-default" href="{{item.detail_url}}"><i class="fa fa-list-alt"></i>Details</a></li>
+                                <li><a class="btn btn-default" ng-if="item.edit_url" href="{{item.edit_url}}"><i class="fa fa-pencil"></i>Edit</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+{% endverbatim %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
