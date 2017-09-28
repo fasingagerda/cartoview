@@ -232,7 +232,7 @@
 								$scope.fun = function (id) {
 												var element = document.getElementById("toggle" + id);
 
-												if (element.classList.contains("fa-angle-down")) {
+												if (element.classList && element.classList.contains("fa-angle-down")) {
 																element
 																				.classList
 																				.remove("fa-angle-down")
