@@ -1,3 +1,36 @@
+<style>
+        .card {
+            /* Add shadows to create the "card" effect */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+        /* On mouse-over, add a deeper shadow */
+    
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+        /* Add some padding inside the card container */
+    
+        .container {
+            padding: 2px 16px;
+        }
+    
+        h4 {
+            padding-left: 3%;
+            padding-top: 3%;
+        }
+        @media only screen and (max-device-width: 480px) {
+            .mob{
+                margin-left: 3%
+            }
+            .card_width{
+                width:300px !important
+            }
+        }
+
+        
+     
+    </style>
 {% extends "app_manager/app_install_base.html" %}
 {% load bootstrap_tags staticfiles %}
 {% load i18n %}
@@ -29,87 +62,104 @@
                 Create New App
             </a>
         {% endif %}
-        <h2>{% trans "Explore Apps" %}</h2>
+        <h3 style="margin-left: 1%">{% trans "Explore Apps" %}</h3>
     </div>
-    <div id="page-wrapper">
-        <div class="container-fluid">
+    <div style="" >
+        <div class="mob">
             <!-- Page Heading -->
-            <div class="row">
-
-                {% for app in Apps %}
+            <div style="display: flex;flex-wrap: wrap;">
+                {% for app in Apps %}                
                     {% if app.config.active and app.name != "cartoview_attachment_manager" %}
-                        <div class="col-xs-12 col-sm-6 col-md-4 item">
-                            <div class="thumbnail">
-                                <img src="{{ STATIC_URL }}{{ app.name }}/logo.png"
-                                     style="min-height:200px;height:200px;">
-                                <div class="caption" >
-                                    <h4 class="text-center">{{ app.title }}</h4>
-                                    <p class="text-center" >
-                                        {% if app.description %}
-                                            {{ app.description|slice:":70" }}
-                                            {% if app.description|length >= 70 %}
-                                                <a href="javascript:;" data-placement="bottom" data-trigger="hover"
-                                                   onclick="" data-toggle="popover" title="Description"
-                                                   data-content="{{ app.description }}">More</a>
-                                            {% endif %}
-                                        {% else %}
-                                            No Description Provided
-                                        {% endif %}
-
-                                    </p>
-                                    <p class="text-center">
-                                        {% if app.single_instance %}
-                                            <a href="{% url 'app_manager_base_url' %}{{ app.name }}"
-                                               target="_parent" class="btn btn-sm btn-primary">Open</a>
-
-                                        {% else %}
-                                            <a href="{% url 'appinstance_browse' %}?app__title={{ app.title }}"
-                                               target="_parent" class="btn btn-sm btn-primary">Explore <span
-                                                    class="badge">{{ app.appinstance_set.all.count }}</span></a>
-                                            {% if not user.is_authenticated or not request.user.is_staff  %}
-                                                <a class="btn btn-sm btn-primary"
-                                                   href="{% url 'account_login' %}?next={% url ""|add:app.name|add:'.new' %}">
-                                                    Create New
-                                                </a>
-
-                                            {% endif %}
-
-                                        {% endif %}
-                                        {% if app.anonymous_urls %}
-                                            {% for key, values in app.anonymous_urls.iteritems %}
-                                                {% url key as the_url %}
-                                                {% if the_url %}
-                                                    <a href="{{ the_url }}" target="_parent"
-                                                       class="btn btn-sm btn-primary"> {{ values }}</a>
-                                                    &nbsp;
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-
-                                        {% if user.user.is_authenticated and app.logged_in_urls %}
-                                            {% for key, values in app.logged_in_urls.iteritems %}
-                                                {% url key as the_url %}
-                                                {% if the_url %}
-                                                    <a href="{{ the_url }}" target="_parent"
-                                                       class="btn btn-sm btn-primary"> {{ values }}</a>
-                                                    &nbsp;
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% if user.is_staff and  app.admin_urls %}
-                                            {% for key, values in app.admin_urls.iteritems %}
-                                                {% url key as the_url %}
-                                                {% if the_url %}
-                                                    <a href="{{ the_url }}" target="_parent"
-                                                       class="btn btn-sm btn-primary"> {{ values }}</a>
-                                                    &nbsp;
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                    </p>
+                        <div  class ="card_width" style="width:220px ; margin: .5%;"  >
+                                <div class="card">
+                                <br>
+                                   <div style="text-align:center"> <h5>{{ app.title }}</h5></div>                             
+                                  
+                                    <div style="background-color:#f7f7f7"> 
+                                            <img class="card_width" src="{{ STATIC_URL }}{{ app.name }}/logo.png"
+                                            style="width:220px;height:170px;">
+                                            <a href="{{ item.launch_app_url }}"></a></img>
+                                    </div>
+                                    <div >
+                                       <div class="col-md-10"></div>
+                                       
+                                        <a class="" onclick="fun({{app.id}})" href="#{{app.id}}" data-toggle="collapse">  <i id="toggle{{app.id}}" class="fa fa-angle-down" style="font-size:36px"></i></a>
+                        
+                                        <div id="{{app.id}}"  class="collapse"> 
+                                       
+                                            <div class="row">
+                                                <div class="col-xs-12 item-items" style="margin :10%">
+                                                    <ul class="list-inline">
+                                            
+                                                            <p>
+                                                                    {% if app.description %}
+                                                                        {{ app.description|slice:":70" }}
+                                                                        {% if app.description|length >= 70 %}
+                                                                            <a href="javascript:;" data-placement="bottom" data-trigger="hover"
+                                                                               onclick="" data-toggle="popover" title="Description"
+                                                                               data-content="{{ app.description }}">More</a>
+                                                                        {% endif %}
+                                                                    {% else %}
+                                                                        No Description Provided
+                                                                    {% endif %}
+                                                                </p>
+                                                                <p >
+                                                                    {% if app.single_instance %}
+                                                                        <a href="{% url 'app_manager_base_url' %}{{ app.name }}"
+                                                                           target="_parent" class="btn btn-sm btn-primary">Open</a>
+                            
+                                                                    {% else %}
+                                                                        <a href="{% url 'appinstance_browse' %}?app__title={{ app.title }}"
+                                                                           target="_parent" class="btn btn-sm btn-primary">Explore <span
+                                                                                class="badge">{{ app.appinstance_set.all.count }}</span></a>
+                                                                        {% if not user.is_authenticated or not request.user.is_staff  %}
+                                                                            <a class="btn btn-sm btn-primary"
+                                                                               href="{% url 'account_login' %}?next={% url ""|add:app.name|add:'.new' %}">
+                                                                                Create New
+                                                                            </a>
+                            
+                                                                        {% endif %}
+                                                                    {% endif %}
+                                                                    {% if app.anonymous_urls %}
+                                                                    {% for key, values in app.anonymous_urls.iteritems %}
+                                                                        {% url key as the_url %}
+                                                                        {% if the_url %}
+                                                                            <a href="{{ the_url }}" target="_parent"
+                                                                               class="btn btn-sm btn-primary"> {{ values }}</a>
+                                                                            &nbsp;
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    {% endif %}
+                            
+                                                                    {% if user.user.is_authenticated and app.logged_in_urls %}
+                                                                        {% for key, values in app.logged_in_urls.iteritems %}
+                                                                            {% url key as the_url %}
+                                                                            {% if the_url %}
+                                                                                <a href="{{ the_url }}" target="_parent"
+                                                                                class="btn btn-sm btn-primary"> {{ values }}</a>
+                                                                                &nbsp;
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                    {% if user.is_staff and  app.admin_urls %}
+                                                                        {% for key, values in app.admin_urls.iteritems %}
+                                                                            {% url key as the_url %}
+                                                                            {% if the_url %}
+                                                                                <a href="{{ the_url }}" target="_parent"
+                                                                                class="btn btn-sm btn-primary"> {{ values }}</a>
+                                                                                &nbsp;
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                </p>
+                                                    </ul>
+                                                </div>
+                                            </div>                        
+                                        </div>
+                                    </div>
+                                    <br/>
                                 </div>
                             </div>
-                        </div>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -121,14 +171,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.2/jquery.matchHeight-min.js"></script>
     <script>
         $(function () {
-            $('.item').matchHeight({
-                byRow: false,
-                property: 'height',
-                target: null,
-                remove: false
+                $('.item').matchHeight({
+                    byRow: false,
+                    property: 'height',
+                    target: null,
+                    remove: false
+                });
+                $('[data-toggle="popover"]').popover();
             });
-            $('[data-toggle="popover"]').popover();
-        });
+
+
+            function fun(id) {
+                var element = document.getElementById("toggle" + id);
+
+                if (element.classList && element.classList.contains("fa-angle-down")) {
+                    element.classList.remove("fa-angle-down")
+                    element.classList.toggle("fa-angle-up");
+                } else {
+                    element.classList.remove("fa-angle-up")
+                    element.classList.toggle("fa-angle-down");
+                }
+            }
+
     </script>
 {% endblock %}
 
