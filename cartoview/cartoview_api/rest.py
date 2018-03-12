@@ -5,6 +5,7 @@ from tastypie.resources import ModelResource
 
 from geonode.api.api import OwnersResource
 from geonode.base.models import ResourceBase
+from geonode.api.resourcebase_api import ResourceBaseResource
 
 type_filter = {
     'app': 'appinstance',
@@ -102,3 +103,50 @@ class AllResourcesResource(ModelResource):
             return "Map"
         else:
             return "Layer"
+
+
+type_mapping = {
+    'map': 'map',
+    'layer': 'layer',
+    'document': 'doc',
+    'appinstance': 'app'
+}
+
+
+class ExtendedBaseResource(ResourceBaseResource):
+    '''
+    Extended geonode ResourceBaseResource to add extra fields in the response,
+    Extra fields: type, urls
+    '''
+
+    def format_objects(self, objects):
+        """
+        Format the objects for output in a response.
+        """
+
+        from cartoview.app_manager.models import AppInstance
+        from geonode.layers.models import Layer
+        from geonode.maps.models import Map
+        from geonode.documents.models import Document
+
+        objects_json = super(ExtendedBaseResource,
+                             self).format_objects(objects)
+
+        for obj, json in zip(objects, objects_json):
+            json['type'] = type_mapping.get(
+                obj.__class__.__name__.lower(), 'others')
+
+            urls = dict(details=json['detail_url'])
+            if isinstance(obj, AppInstance):
+                urls["view"] = reverse('%s.view' % obj.app.name,
+                                       args=[str(obj.id)])
+                urls['edit'] = reverse('%s.edit' %obj.app.name, args=[str(obj.id)])
+            elif isinstance(obj, Document):
+                urls["download"] = reverse(
+                    'document_download', None, [str(obj.id)])
+            elif isinstance(obj, Map):
+                urls["view"] = reverse('map_view', None, [str(obj.id)])
+            json['urls'] = urls
+
+        return objects_json
+        
