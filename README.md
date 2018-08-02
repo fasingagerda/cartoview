@@ -18,6 +18,7 @@ Cartoview extends the popular [GeoNode](http://geonode.org/) SDI to provide the 
       ```
   - open your browser and type the following address `10.5.0.4`
   - default user credentials `admin/admin` for cartoview and `admin/geoserver` for geoserver
+  - you need to configure oauth in geonode and geoserver to do this please use this [link](http://docs.geonode.org/en/master/tutorials/admin/geoserver_geonode_security/index.html)
   - you can stop containers with `make down` or `docker-compose down`
   - you can get logs for each service in `docker-compose.yml` unsing the following command:
       - `docker-compose logs --follow --tail=100 <service_name>`
@@ -55,5 +56,6 @@ Cartoview extends the popular [GeoNode](http://geonode.org/) SDI to provide the 
           INSTALLED_APPS += load_apps()
           ```
       - restart your server
+
 ## Docs:
   - [How to use and install](http://cartologic.github.io)
