@@ -4,6 +4,8 @@ from distutils.util import strtobool
 
 from geonode.settings import *
 import ast
+import re
+import dj_database_url
 import cartoview
 
 INSTALLED_APPS += ("cartoview",
@@ -67,14 +69,20 @@ LOCAL_MEDIA_URL = "/uploaded/"
 CKEDITOR_UPLOAD_PATH = "uploads/"
 # static section
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-# INSTALLED_APPS = ('ckeditor', ) + INSTALLED_APPS
-# INSTALLED_APPS += ('hazards', 'gpkg_manager', "ags2sld")
+DATABASE_URL = os.getenv('DATABASE_URL', None)
+DATASTORE_DATABASE_URL = os.getenv('DATASTORE_DATABASE_URL', None)
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.parse(
+        DATABASE_URL, conn_max_age=600)
+if DATASTORE_DATABASE_URL:
+    DATABASES['datastore'] = dj_database_url.parse(
+        DATASTORE_DATABASE_URL, conn_max_age=600)
 try:
     # try to parse python notation, default in dockerized env
     ALLOWED_HOSTS = ast.literal_eval(os.getenv('ALLOWED_HOSTS'))
 except ValueError:
     # fallback to regular list of values separated with misc chars
-    ALLOWED_HOSTS = ['localhost', 'django', 'geonode'] if os.getenv('ALLOWED_HOSTS') is None \
+    ALLOWED_HOSTS = ['*'] if os.getenv('ALLOWED_HOSTS') is None \
         else re.split(r' *[,|:|;] *', os.getenv('ALLOWED_HOSTS'))
 try:
     from .local_settings import *
@@ -88,7 +96,9 @@ if 'geonode.geoserver' in INSTALLED_APPS and "LOCAL_GEOSERVER" in \
         locals() and LOCAL_GEOSERVER in MAP_BASELAYERS:
     LOCAL_GEOSERVER["source"][
         "url"] = OGC_SERVER['default']['PUBLIC_LOCATION'] + "wms"
+
 # NOTE:set cartoview_stand_alone environment var if you are not using cartoview_proect_template
-if strtobool(os.getenv('CARTOVIEW_STAND_ALONE', 'FALSE')):
+CARTOVIEW_STAND_ALONE = strtobool(os.getenv('CARTOVIEW_STAND_ALONE', 'FALSE'))
+if CARTOVIEW_STAND_ALONE:
     from cartoview.app_manager.settings import load_apps
     INSTALLED_APPS += load_apps()
