@@ -2,8 +2,7 @@ import json
 
 from django.core.urlresolvers import reverse
 from geonode.api.api import OwnersResource
-from geonode.api.authorization import (GeonodeApiKeyAuthentication,
-                                       GeoNodeAuthorization)
+from geonode.api.authorization import (GeoNodeAuthorization)
 from geonode.api.resourcebase_api import MapResource, ResourceBaseResource
 from geonode.base.models import ResourceBase
 from geonode.layers.models import Attribute, Layer
@@ -64,7 +63,7 @@ class AllResourcesResource(ModelResource):
         }
         authorization = GeoNodeAuthorization()
         authentication = MultiAuthentication(
-            SessionAuthentication(), GeonodeApiKeyAuthentication())
+            SessionAuthentication(),)
 
     def build_filters(self, filters=None):
         if filters is None:
@@ -163,7 +162,7 @@ class AttributeResource(ModelResource):
             'layer': ALL_WITH_RELATIONS
         }
         authentication = MultiAuthentication(
-            SessionAuthentication(), GeonodeApiKeyAuthentication())
+            SessionAuthentication(),)
 
 
 class MapLayerResource(ModelResource):
@@ -228,4 +227,4 @@ class MapLayerResource(ModelResource):
         }
         authorization = GeoNodeAuthorization()
         authentication = MultiAuthentication(
-            SessionAuthentication(), GeonodeApiKeyAuthentication())
+            SessionAuthentication(),)

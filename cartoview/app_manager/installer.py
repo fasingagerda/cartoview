@@ -29,7 +29,6 @@ from cartoview.log_handler import get_logger
 from .config import App as AppConfig
 from .helpers import change_path_permission, create_direcotry
 from .models import App, AppStore, AppType
-from .settings import create_apps_dir
 
 logger = get_logger(__name__)
 install_app_batch = getattr(settings, 'INSTALL_APP_BAT', None)
@@ -132,7 +131,7 @@ class AppAlreadyInstalledException(BaseException):
 class AppInstaller(object):
 
     def __init__(self, name, store_id=None, version=None, user=None):
-        create_apps_dir()
+        create_direcotry(settings.APPS_DIR)
         self.user = user
         self.app_dir = os.path.join(settings.APPS_DIR, name)
         self.name = name

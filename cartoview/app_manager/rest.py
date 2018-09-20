@@ -13,7 +13,7 @@ from geonode.api.api import ProfileResource
 from geonode.api.authorization import GeoNodeAuthorization
 from geonode.api.resourcebase_api import (CommonMetaApi, LayerResource,
                                           MapResource)
-from geonode.layers.models import Attribute
+from geonode.layers.models import Attribute,Layer
 from geonode.maps.models import MapLayer
 from geonode.people.models import Profile
 from guardian.shortcuts import get_objects_for_user

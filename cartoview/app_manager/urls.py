@@ -15,7 +15,6 @@ from cartoview.app_manager.rest import (AppInstanceResource, AppResource,
                                         GeonodeLayerResource,
                                         GeonodeMapLayerResource,
                                         TagResource)
-from cartoview.app_manager.utils import map_layers
 from django.conf.urls import include, patterns, url
 from django.views.generic import TemplateView
 from future import standard_library
@@ -73,8 +72,7 @@ urlpatterns = [
     url(r'^(?P<appinstanceid>\d+)/remove$',
         app_manager_views.appinstance_remove,
         name="appinstance_remove"),
-    url(r'^rest/', include(rest_api.urls)),
-    url(r'^maplayers/api$', map_layers, name="cartoview_map_layers"), ]
+    url(r'^rest/', include(rest_api.urls)), ]
 
 
 def import_app_rest(app_name):
