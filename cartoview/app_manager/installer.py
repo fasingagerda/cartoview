@@ -146,13 +146,9 @@ class AppInstaller(object):
         """
         get app information form app store rest url
         """
-        try:
-            q = requests.get(self.store.url + ''.join(
-                [str(item) for item in args]))
-            return q.json()
-        except BaseException as e:
-            logger.error(e.message)
-            return None
+        q = requests.get(self.store.url + ''.join(
+            [str(item) for item in args]))
+        return q.json()
 
     def extract_move_app(self, zipped_app):
         extract_to = tempfile.mkdtemp(dir=temp_dir)
@@ -177,7 +173,7 @@ class AppInstaller(object):
             if not os.access(temp_dir, os.W_OK):
                 change_path_permission(temp_dir)
             self.extract_move_app(zip_ref)
-        except Exception as e:
+        except shutil.Error as e:
             raise e
         finally:
             zip_ref.close()
