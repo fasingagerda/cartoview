@@ -12,6 +12,9 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import signals
 from future import standard_library
+from jsonfield import JSONField
+from taggit.managers import TaggableManager
+from cartoview.app_manager.utils import AppsThumbnail
 # Create your models here.
 from geonode.base.models import ResourceBase, resourcebase_post_save
 from geonode.maps.models import Map as GeonodeMap
@@ -233,6 +236,9 @@ def pre_save_appinstance(instance, sender, **kwargs):
 
     if instance.title == '' or instance.title is None:
         instance.title = 'No title provided'
+    if not instance.thumbnail_url:
+        thumbnail_obj = AppsThumbnail(instance)
+        thumbnail_obj.create_thumbnail()
 
 
 def pre_delete_appinstance(instance, sender, **kwargs):
