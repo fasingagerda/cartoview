@@ -8,6 +8,11 @@ import logging
 from sys import stdout
 from django.core.management import call_command
 from django.core.management.base import CommandError
+# TODO: find a cross platform function (fcntl is not supported by windows)
+try:
+    import fcntl
+except Exception:
+    pass
 pending_yaml = settings.PENDING_APPS
 formatter = logging.Formatter(
     '[%(asctime)s] p%(process)s  { %(name)s %(pathname)s:%(lineno)d} \
@@ -28,7 +33,12 @@ class AppsHandlerConfig(AppConfig):
 
     def reset(self):
         with open(pending_yaml, 'w+') as f:
-            yaml.dump([], f)
+            if 'fcntl' in globals():
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                yaml.dump([], f)
+                fcntl.flock(f, fcntl.LOCK_UN)
+            else:
+                yaml.dump([], f)
 
     def execute_pending(self):
         if os.path.exists(pending_yaml):
