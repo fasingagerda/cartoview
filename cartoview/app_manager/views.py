@@ -618,13 +618,8 @@ class StandardAppViews(AppViews):
     def view_app(self, request, instance_id, template=None, context={}):
         if template is None:
             template = self.view_template
-        instance = _resolve_appinstance(
-            request, instance_id, 'base.view_resourcebase',
-            _PERMISSION_MSG_VIEW)
-        map_config = instance.map.viewer_json(
-            request.user, None) if instance.map else None
+        instance = get_object_or_404(AppInstance, pk=instance_id)
         context.update({
-            "map_config": map_config,
             "instance": instance,
             "app_name": self.app_name
         })
