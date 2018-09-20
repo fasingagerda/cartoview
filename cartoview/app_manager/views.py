@@ -534,6 +534,15 @@ class AppViews(with_metaclass(abc.ABCMeta, object)):
         instance_obj.save()
         return instance_obj
 
+    def save_all(self, request, instance_id=None):
+        response = self.save(request, instance_id)
+        id = json.loads(response.content).get('id', None)
+        if id:
+            instance_obj = AppInstance.objects.get(pk=instance_id)
+            thumb_obj = AppsThumbnail(instance_obj)
+            thumb_obj.create_thumbnail()
+        return response
+
     def save(self, request, instance_id=None):
         res_json = dict(success=False)
         data = json.loads(request.body)
@@ -592,7 +601,7 @@ class StandardAppViews(AppViews):
         if template is None:
             template = self.new_template
         if request.method == 'POST':
-            return self.save(request)
+            return self.save_all(request)
         return render(request, template, context)
 
     @method_decorator(login_required)
@@ -601,8 +610,9 @@ class StandardAppViews(AppViews):
         if template is None:
             template = self.edit_template
         if request.method == 'POST':
-            return self.save(request, instance_id)
-        instance = AppInstance.objects.get(pk=instance_id)
+            return self.save_all(request, instance_id)
+
+        instance = get_object_or_404(AppInstance, pk=instance_id)
         context.update(instance=instance)
         return render(request, template, context)
 
