@@ -50,8 +50,6 @@ class AppsHandlerConfig(AppConfig):
                                 not in error:
                             self.delete_application_on_fail(app)
             self.reset()
-        else:
-            pass
 
     def ready(self):
         self.execute_pending()
