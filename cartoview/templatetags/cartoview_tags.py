@@ -165,3 +165,20 @@ def facets(context):
 def jsonify(values):
     """Json Object"""
     return mark_safe(json.dumps(values))
+
+
+@register.filter(name='objects_count')
+def objects_count(instances, user):
+    permitted = [instance for instance in instances if user.has_perm(
+        'view_resourcebase', instance.get_self_resource())]
+    return len(permitted)
+
+
+@register.simple_tag(name='cartoview_reverse')
+def reverse_url(url_name, *args, **kwargs):
+    url = None
+    try:
+        url = reverse(url_name, args=args, kwargs=kwargs)
+    except:
+        pass
+    return json.dumps(url)
