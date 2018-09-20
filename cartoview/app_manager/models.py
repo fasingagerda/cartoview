@@ -2,32 +2,27 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import json
-import logging
 from builtins import *
-from sys import stdout
+from datetime import datetime
 
 from django.conf import settings as geonode_settings
 from django.contrib.gis.db import models
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import signals
+from django.template.defaultfilters import slugify
 from future import standard_library
-from jsonfield import JSONField
-from taggit.managers import TaggableManager
 # Create your models here.
 from geonode.base.models import ResourceBase, resourcebase_post_save
 from geonode.maps.models import Map as GeonodeMap
 from geonode.security.models import remove_object_permissions
-from taggit.managers import TaggableManager
 from jsonfield import JSONField
-from django.contrib.auth.models import Group
-from geonode.security.models import set_owner_permissions
-from guardian.shortcuts import assign_perm
-from django.contrib.auth import get_user_model
+from taggit.managers import TaggableManager
 
+from cartoview.log_handler import get_logger
 
 from .config import AppsConfig
-from cartoview.log_handler import get_logger
+
 logger = get_logger(__name__)
 
 standard_library.install_aliases()
@@ -204,7 +199,7 @@ class AppInstance(ResourceBase):
             return str(self.id)
         else:
             return '%s (%s)' % (self.title, self.id)
-
+    
     @property
     def config_obj(self):
         try:
